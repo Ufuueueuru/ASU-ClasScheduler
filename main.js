@@ -1,6 +1,29 @@
 let classList = [];
 let timeMode = 0;//0 is 12-hour, 1 is 24-hour
 
+function createClassList(arr) {
+    let temp = [];
+    for (let i in arr) {
+        temp.push(new Class("", false));
+        for (let u in arr[i]) {
+            temp[i][u] = arr[i][u];
+            if (typeof temp[i][u] === "object") {
+                for (let j in arr[i][u]) {
+                    if (typeof temp[i][u][j] === "object") {
+                        for (let o in arr[i][u][j]) {
+                            if (arr[i][u][j][o].hours !== undefined && arr[i][u][j][o].minutes !== undefined && arr[i][u][j][o].apm !== undefined) {
+                                temp[i][u][j][o] = new Time(arr[i][u][j][o].hours, arr[i][u][j][o].minutes, arr[i][u][j][o].apm);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return temp;
+}
+
 class Time {
     constructor(hours, minutes, apm) {
         this.hours = hours;
@@ -25,8 +48,8 @@ class Time {
 }
 
 class Class {
-    constructor(str) {
-        //Takes the formatted string and creates
+    constructor(str="", printErrors=true) {
+        //Takes the formatted string and creates an object representing that class information
 
         try {
             let pointer = 0;
@@ -112,8 +135,10 @@ class Class {
             this.timeSelected = 0;//Which time to display
             this.checked = true;
         } catch (error) {
-            console.log(error);
-            addClassError();
+            if (printErrors) {
+                console.log(error);
+                addClassError();
+            }
         }
         /*
             MAT 243
@@ -208,4 +233,11 @@ class Class {
         
         
     }
+}
+
+function saveList() {
+    localStorage.setItem("classList", JSON.stringify(classList));
+}
+function loadList() {
+    classList = createClassList(JSON.parse(localStorage.getItem("classList")));
 }

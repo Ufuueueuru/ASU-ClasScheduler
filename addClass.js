@@ -10,6 +10,7 @@ function addNewClass() {
         errorText.innerHTML = "";
 
         classList.push(new Class(classStrings));
+        saveList();
     } else {
         //There must be at least 16 lines to match the proper formatting
         addClassError();

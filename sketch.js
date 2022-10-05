@@ -19,10 +19,18 @@ function setup() {
         endTime: 20,//8 PM
         height: height / 7,
         scroll: 0
+    };
+
+    if (localStorage.getItem("classList") !== null) {
+        loadList();
     }
 }
 
 function draw() {
+    if (frameCount % 300 === 0) {
+        saveList();
+    }
+
     background(255);
     cursor(ARROW);
 

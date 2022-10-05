@@ -176,17 +176,19 @@ class Class {
             instructors = this.instructors[0] + ", " + this.instructors[1] + ", " + this.instructors[2] + "...";
         }
         text(instructors, x + 5 * unit, y + shelfHeight / 2 - 36, 2 * unit);
-        
-        text(this.days[this.timeSelected] + "\n" + this.times[this.timeSelected][0] + " - " + this.times[this.timeSelected][1] + "\n" + this.campus + " - " + this.locationName + this.locationNumber, x + 7 * unit, y + shelfHeight / 2 - 36, 2 * unit);
 
-        let units = this.units[0];
-        if (this.units.length > 1)
-            units += " - " + this.units[1];
-        text(this.dates[this.timeSelected] + "\n" + units + "\n" + this.openSeats + " of " + this.totalSeats, x + 9 * unit, y + shelfHeight / 2 - 36, 2 * unit)
+        if (this.days.length > 0) {//TODO fix this conditional, it's bad
+            text(this.days[this.timeSelected] + "\n" + this.times[this.timeSelected][0] + " - " + this.times[this.timeSelected][1] + "\n" + this.campus + " - " + this.locationName + this.locationNumber, x + 7 * unit, y + shelfHeight / 2 - 36, 2 * unit);
+
+            let units = this.units[0];
+            if (this.units.length > 1)
+                units += " - " + this.units[1];
+            text(this.dates[this.timeSelected] + "\n" + units + "\n" + this.openSeats + " of " + this.totalSeats, x + 9 * unit, y + shelfHeight / 2 - 36, 2 * unit)
+        }
     }
 
     drawCalendar() {
-        if (this.checked) {
+        if (this.checked && this.days.length > 0) {
             noStroke();
             let hour = this.times[this.timeSelected][0].milHours;
             let timeHeight = this.times[this.timeSelected][1].milHours - hour + this.times[this.timeSelected][1].minutesPercent() - this.times[this.timeSelected][0].minutesPercent();
@@ -197,7 +199,7 @@ class Class {
                 if (i >= startDay-1) {
                     let x = shelfWidth + 10 + (days[this.days[this.timeSelected][i]] + 0.6 - startDay) * (width - shelfWidth - 20) / (numDays + 0.5);
                     fill(90, 180, 120);
-                    rect(x, y, timeWidth, calendar.height * timeHeight);
+                    rect(x, y, timeWidth, calendar.height * timeHeight, 10);
                     fill(0);
                     text(this.name + "\n" + this.times[this.timeSelected][0] + " - " + this.times[this.timeSelected][1], x, y + 10, timeWidth, calendar.height * timeHeight);
                 }

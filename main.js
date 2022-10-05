@@ -217,7 +217,7 @@ class Class {
             noStroke();
             let hour = this.times[this.timeSelected][0].milHours;
             let timeHeight = this.times[this.timeSelected][1].milHours - hour + this.times[this.timeSelected][1].minutesPercent() - this.times[this.timeSelected][0].minutesPercent();
-            let y = hour * calendar.height - calendar.startTime * calendar.height + calendar.scroll;
+            let y = (this.times[this.timeSelected][0].minutesPercent() + hour) * calendar.height - calendar.startTime * calendar.height + calendar.scroll;
             let timeWidth = (width - shelfWidth - 20) / (numDays + 0.5);
             let days = { "Su": 0, "M": 1, "T": 2, "W": 3, "Th": 4, "F": 5, "Sa": 6 };
             for (let i = 0; i < this.days[this.timeSelected].length; i++) {
@@ -226,7 +226,7 @@ class Class {
                     fill(90, 180, 120);
                     rect(x, y, timeWidth, calendar.height * timeHeight, 10);
                     fill(0);
-                    text(this.name + "\n" + this.times[this.timeSelected][0] + " - " + this.times[this.timeSelected][1], x, y + 10, timeWidth, calendar.height * timeHeight);
+                    text(this.name + "\n" + this.times[this.timeSelected][0] + " - " + this.times[this.timeSelected][1], x, y + 10, timeWidth/*, calendar.height * timeHeight*/);
                 }
             }
         }

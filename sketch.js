@@ -47,11 +47,28 @@ function draw() {
     noStroke();
     let calendarStart = shelfWidth + 10;
     let calendarWidth = width - shelfWidth - 20;
-    rect(calendarStart, 0, calendarWidth, 50);
+    rect(calendarStart, 0, calendarWidth, 20);
     fill(50, 50, 0, 100);
     let days = ["Sunday", "Monday", "Wednesday", "Thursday", "Friday", "Saturday"];
     for (let i = startDay; i < numDays + 1; i++) {
-        text(days[i], calendarStart + (i + 0.6 - startDay) * calendarWidth / (numDays + 0.5), 10);
+        text(days[i], calendarStart + (i + 0.6 - startDay) * calendarWidth / (numDays + 0.5), 15);
+    }
+    fill(0);
+    for (let i = calendar.startTime; i < calendar.endTime; i++) {
+        let currentHours = i;
+        let currentApm = "AM";
+        if (timeMode === 0) {
+            if (currentHours > 11) {
+                currentApm = "PM";
+                if (currentHours > 12)
+                    currentHours -= 12;
+            }
+            if (currentHours === 24) {
+                currentHours = 12;
+                currentApm = "AM";
+            }
+        }
+        text(currentHours + ":00 " + currentApm, shelfWidth + 15, (i - calendar.startTime) * calendar.height + 10 + calendar.scroll);
     }
 
     let shelfPercent = min(1, height / classList.length / shelfHeight);//The percentage of the shelf that you can see at once
@@ -77,6 +94,8 @@ function draw() {
 
 function windowResized() {
     resizeCanvas(windowWidth - 310, windowHeight);
+
+    calendar.height = height / 7;
 }
 
 function mouseWheel(event) {
@@ -123,6 +142,12 @@ function mouseDragged() {
     }
     if (draggingShelf) {
         shelfWidth += mouseX - pmouseX;
+        let lower = width / 3;
+        let upper = width * 5 / 9;
+        shelfWidth = constrain(shelfWidth, lower, upper);
+        if (lower > upper) {
+            shelfWidth = width * 2 / 5;
+        }
     }
     if (draggingCalendar) {
         let totalHours = calendar.endTime - calendar.startTime;

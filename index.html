@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>ASU ClasScheduler</title>
+
+        <style>
+            body {
+                padding: 0px;
+                margin: 0px;
+            }
+            #errorText {
+                color: red;
+            }
+
+            #newClass {
+                resize: none;
+                width: 300px;
+                height: 300px;
+            }
+
+            #classAdder {
+                float: left;
+            }
+
+            #canvas {
+                float: left;
+                margin: 0px;
+                display: flex;
+            }
+
+            .yellowButton {
+                background-color: #ffc627;
+                border-radius: 40%;
+                border: none;
+                font-size: 26px;
+                margin: 5px;
+                padding: 5px;
+            }
+
+            .yellowButton:hover {
+                background-color: #eeb516;
+            }
+        </style>
+
+        <script src="p5.js"></script>
+        <script src="sketch.js"></script>
+    </head>
+    <body>
+
+
+        <div id="classAdder">
+            <form>
+                <textarea id="newClass"></textarea><br>
+            </form>
+            <button onclick="addNewClass();" class="yellowButton">Add Class</button>
+            <p id="errorText"></p>
+        </div>
+
+        <div id="canvas"></div>
+
+
+        <script type="text/javascript" src="main.js"></script>
+        <script type="text/javascript" src="addClass.js"></script>
+    </body>
+</html>

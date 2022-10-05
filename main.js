@@ -1,0 +1,209 @@
+let classList = [];
+let timeMode = 0;//0 is 12-hour, 1 is 24-hour
+
+class Time {
+    constructor(hours, minutes, apm) {
+        this.hours = hours;
+        this.milHours = hours;
+        if ((apm.toLowerCase() === "pm" && hours !== 12) || (apm.toLowerCase() === "am" && hours === 12)) {
+            this.milHours += 12;
+        }
+        this.minutes = minutes;
+
+        this.apm = apm;
+    }
+
+    minutesPercent() {
+        return this.minutes / 60;
+    }
+
+    toString() {
+        if (timeMode === 0)
+            return this.hours + ":" + (this.minutes >= 10?this.minutes:"0" + this.minutes) + " " + this.apm;
+        return this.milHours + ":" + this.minutes;
+    }
+}
+
+class Class {
+    constructor(str) {
+        //Takes the formatted string and creates
+
+        try {
+            let pointer = 0;
+
+            let course = str[pointer].split(" ");
+            this.subject = course[pointer];
+            this.subjectNum = parseInt(course[1]);
+
+            pointer = 1;
+            this.name = str[pointer];
+
+            pointer = 2;
+            this.id = parseInt(str[pointer]);
+
+            pointer = 3;
+            this.instructors = str[pointer].split(", ");
+
+            this.days = [];
+            pointer = 5;
+            while (/^Th|Su|[MTWFS]/y.test(str[pointer])) {
+                this.days.push(str[pointer].split(" "));
+                pointer += 2;
+            }
+
+            this.times = [];
+            let start = pointer;
+            let timeCount = 0;
+            while (/\d+:\d+ [AaPp][Mm]/.test(str[pointer])) {
+                timeCount++;
+                pointer += 2;
+            }
+            pointer = start;
+            for (let i = 0; i < timeCount / 2; i++) {
+                let nums = str[pointer].match(/\d+/g);
+                let apm = str[pointer].match(/[pPaA][mM]/)[0];
+                let startTime = new Time(parseInt(nums[0]), parseInt(nums[1]), apm);
+
+                nums = str[pointer + timeCount].match(/\d+/g);
+                apm = str[pointer + timeCount].match(/[pPaA][mM]/)[0];
+                let endTime = new Time(parseInt(nums[0]), parseInt(nums[1]), apm);
+
+                this.times.push([startTime, endTime]);
+                pointer += 2;
+            }
+            pointer += timeCount;
+
+            this.campus = [];
+            this.locationName = [];
+            this.locationNumber = [];
+            while (/\w+ - \w+/y.test(str[pointer])) {
+                this.campus.push(str[pointer].substring(0, str[pointer].indexOf("-") - 1));
+                let location = str[pointer].substring(str[pointer].indexOf("-") + 1);
+                this.locationName.push(location.match(/[a-zA-Z]+/)[0]);
+                if (/\d+/.test(location)) {
+                    this.locationNumber.push(parseInt(location.match(/\d+/)[0]));
+                } else {
+                    this.locationNumber.push("");
+                }
+                pointer += 2;
+            }
+
+            this.dates = [];
+            this.sessions = [];
+            while (/\d+\/\d+ - \d+\/\d+/.test(str[pointer])) {
+                this.dates.push(str[pointer]);
+                if (/(?<=\()\w(?=\))/.test(str[pointer]))
+                    this.sessions.push(str[pointer].match(/(?<=\()\w(?=\))/)[0]);
+                pointer += 2;
+            }
+            pointer--;
+
+            let tempNums = str[pointer].match(/\d+/g);
+            this.units = [];
+            let tempArray = this.units;
+            tempNums.forEach((i) => { tempArray.push(parseInt(i)); });
+
+            pointer++;
+            let seats = str[pointer].split(" ");
+            this.openSeats = parseInt(seats[0]);
+            this.totalSeats = parseInt(seats[2]);
+
+            //Variables that are used for choosing classes
+            this.timeSelected = 0;//Which time to display
+            this.checked = true;
+        } catch (error) {
+            console.log(error);
+            addClassError();
+        }
+        /*
+            MAT 243
+            Discrete Mathematical Structures
+            70922
+            Oleksandr Lytvak
+
+            M W
+
+            3:00 PM
+
+            4:15 PM
+
+            Tempe - LIBC3
+
+            8/18 - 12/2 (C)
+            3
+            2 of 70
+        */
+    }
+
+    checkMark(x, y) {
+        let unit = shelfWidth / 11;
+        let size = 20;
+        if (mouseX > x + unit - size / 2 && mouseX < x + unit + size / 2 && mouseY > y + shelfHeight / 2 - size / 2 && mouseY < y + shelfHeight / 2 + size / 2) {
+            this.checked = !this.checked;
+        }
+    }
+
+    drawShelf(x, y, width) {//   ||\\\||\\||
+        textAlign(LEFT);
+        textSize(12);
+
+        fill(255);
+        if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + shelfHeight)
+            fill(200);
+        stroke(0);
+        rect(x, y, width, shelfHeight);
+
+        let unit = shelfWidth / 11;
+
+        fill(255, 198, 39);
+        stroke(0);
+        let size = 20;
+        rect(x + unit - size/2, y + shelfHeight / 2 - size/2, size, size);
+        if (this.checked) {
+            stroke(140, 29, 64);
+            strokeWeight(5);
+            line(x + unit - size / 2, y + shelfHeight / 2, x + unit, y + shelfHeight / 2 + size / 3);
+            line(x + unit, y + shelfHeight / 2 + size / 3, x + unit + size / 2, y + shelfHeight / 2 - size / 2);
+            strokeWeight(1);
+        }
+
+        fill(0);
+        noStroke();
+        text(this.subject + this.subjectNum + "\n" + this.name + "\n" + this.id, x + 2 * unit, y + shelfHeight / 2 - 36, 3 * unit);
+
+        let instructors = this.instructors + "";
+        if (this.instructors.length > 3) {
+            instructors = this.instructors[0] + ", " + this.instructors[1] + ", " + this.instructors[2] + "...";
+        }
+        text(instructors, x + 5 * unit, y + shelfHeight / 2 - 36, 2 * unit);
+        
+        text(this.days[this.timeSelected] + "\n" + this.times[this.timeSelected][0] + " - " + this.times[this.timeSelected][1] + "\n" + this.campus + " - " + this.locationName + this.locationNumber, x + 7 * unit, y + shelfHeight / 2 - 36, 2 * unit);
+
+        let units = this.units[0];
+        if (this.units.length > 1)
+            units += " - " + this.units[1];
+        text(this.dates[this.timeSelected] + "\n" + units + "\n" + this.openSeats + " of " + this.totalSeats, x + 9 * unit, y + shelfHeight / 2 - 36, 2 * unit)
+    }
+
+    drawCalendar() {
+        if (this.checked) {
+            noStroke();
+            let hour = this.times[this.timeSelected][0].milHours;
+            let timeHeight = this.times[this.timeSelected][1].milHours - hour + this.times[this.timeSelected][1].minutesPercent() - this.times[this.timeSelected][0].minutesPercent();
+            let y = hour * calendar.height - calendar.startTime * calendar.height + calendar.scroll;
+            let timeWidth = (width - shelfWidth - 20) / (numDays + 0.5);
+            let days = { "Su": 0, "M": 1, "T": 2, "W": 3, "Th": 4, "F": 5, "Sa": 6 };
+            for (let i = 0; i < this.days[this.timeSelected].length; i++) {
+                if (i >= startDay-1) {
+                    let x = shelfWidth + 10 + (days[this.days[this.timeSelected][i]] + 0.6 - startDay) * (width - shelfWidth - 20) / (numDays + 0.5);
+                    fill(90, 180, 120);
+                    rect(x, y, timeWidth, calendar.height * timeHeight);
+                    fill(0);
+                    text(this.name + "\n" + this.times[this.timeSelected][0] + " - " + this.times[this.timeSelected][1], x, y + 10, timeWidth, calendar.height * timeHeight);
+                }
+            }
+        }
+        
+        
+    }
+}

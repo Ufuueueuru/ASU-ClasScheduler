@@ -47,31 +47,40 @@ class Time {
     }
 }
 
+function nextLine(str, pointer) {
+    let check = "";
+    do {
+        pointer++;
+        check = str[pointer].replace(/\s+/g, '');
+    } while (check === "");
+    return pointer;
+}
+
 class Class {
-    constructor(str="", printErrors=true) {
+    constructor(str=[], printErrors=true) {
         //Takes the formatted string and creates an object representing that class information
 
         try {
             let pointer = 0;
 
             let course = str[pointer].split(" ");
-            this.subject = course[pointer];
+            this.subject = course[0];
             this.subjectNum = parseInt(course[1]);
 
-            pointer = 1;
+            pointer = nextLine(str, pointer);
             this.name = str[pointer];
 
-            pointer = 2;
+            pointer = nextLine(str, pointer);
             this.id = parseInt(str[pointer]);
 
-            pointer = 3;
+            pointer = nextLine(str, pointer);
             this.instructors = str[pointer].split(", ");
 
             this.days = [];
-            pointer = 5;
+            pointer = nextLine(str, pointer);
             while (/^Th|Su|[MTWFS]/y.test(str[pointer])) {
                 this.days.push(str[pointer].split(" "));
-                pointer += 2;
+                pointer = nextLine(str, pointer);
             }
 
             this.times = [];
@@ -79,22 +88,31 @@ class Class {
             let timeCount = 0;
             while (/\d+:\d+ [AaPp][Mm]/.test(str[pointer])) {
                 timeCount++;
-                pointer += 2;
+                pointer = nextLine(str, pointer);
             }
             pointer = start;
+            let startTimes = [];
             for (let i = 0; i < timeCount / 2; i++) {
                 let nums = str[pointer].match(/\d+/g);
                 let apm = str[pointer].match(/[pPaA][mM]/)[0];
                 let startTime = new Time(parseInt(nums[0]), parseInt(nums[1]), apm);
 
-                nums = str[pointer + timeCount].match(/\d+/g);
-                apm = str[pointer + timeCount].match(/[pPaA][mM]/)[0];
-                let endTime = new Time(parseInt(nums[0]), parseInt(nums[1]), apm);
-
-                this.times.push([startTime, endTime]);
-                pointer += 2;
+                startTimes.push(startTime);
+                
+                pointer = nextLine(str, pointer);
             }
-            pointer += timeCount;
+            let endTimes = [];
+            for (let i = 0; i < timeCount / 2; i++) {
+                let nums = str[pointer].match(/\d+/g);
+                let apm = str[pointer].match(/[pPaA][mM]/)[0];
+                let endTime = new Time(parseInt(nums[0]), parseInt(nums[1]), apm);
+                endTimes.push(endTime);
+
+                pointer = nextLine(str, pointer);
+            }
+            for (let i = 0; i < startTimes.length; i++) {
+                this.times.push([startTimes[i], endTimes[i]]);
+            }
 
             this.campus = [];
             this.locationName = [];
@@ -108,7 +126,7 @@ class Class {
                 } else {
                     this.locationNumber.push("");
                 }
-                pointer += 2;
+                pointer = nextLine(str, pointer);
             }
 
             this.dates = [];
@@ -117,16 +135,16 @@ class Class {
                 this.dates.push(str[pointer]);
                 if (/(?<=\()\w(?=\))/.test(str[pointer]))
                     this.sessions.push(str[pointer].match(/(?<=\()\w(?=\))/)[0]);
-                pointer += 2;
+                pointer = nextLine(str, pointer);
             }
-            pointer--;
+            //pointer--;
 
             let tempNums = str[pointer].match(/\d+/g);
             this.units = [];
             let tempArray = this.units;
             tempNums.forEach((i) => { tempArray.push(parseInt(i)); });
 
-            pointer++;
+            pointer = nextLine(str, pointer);
             let seats = str[pointer].split(" ");
             this.openSeats = parseInt(seats[0]);
             this.totalSeats = parseInt(seats[2]);

@@ -61,6 +61,8 @@ class Class {
         //Takes the formatted string and creates an object representing that class information
 
         try {
+            this.darken = false;
+
             let pointer = 0;
 
             let course = str[pointer].split(" ");
@@ -209,8 +211,10 @@ class Class {
         textSize(12);
 
         fill(255);
-        if (mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + shelfHeight)
+        this.darken = mouseX > x && mouseX < x + width && mouseY > y && mouseY < y + shelfHeight;
+        if (this.darken) {
             fill(200);
+        }
         stroke(0);
         rect(x, y, width, shelfHeight);
 
@@ -283,6 +287,8 @@ class Class {
                 if (i >= startDay-1) {
                     let x = shelfWidth + 10 + (days[this.days[this.timeSelected][i]] + 0.6 - startDay) * (width - shelfWidth - 20) / (numDays + 0.5);
                     fill(90, 180, 120);
+                    if (this.darken)
+                        fill(80, 160, 110);
                     rect(x, y, timeWidth, calendar.height * timeHeight, 10);
                     fill(0);
                     text(this.name + "\n" + this.times[this.timeSelected][0] + " - " + this.times[this.timeSelected][1], x, y + 10, timeWidth/*, calendar.height * timeHeight*/);

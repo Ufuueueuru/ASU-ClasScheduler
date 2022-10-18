@@ -57,7 +57,7 @@ function draw() {
     let calendarWidth = width - shelfWidth - 20;
     rect(calendarStart, 0, calendarWidth, 20);
     fill(50, 50, 0, 100);
-    let days = ["Sunday", "Monday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     for (let i = startDay; i < numDays + 1; i++) {
         text(days[i], calendarStart + (i + 0.6 - startDay) * calendarWidth / (numDays + 0.5), 15);
     }
@@ -165,7 +165,10 @@ function mouseDragged() {
 }
 
 function mouseClicked() {
-    for (let i in classList) {
+    for (let i = classList.length - 1; i >= 0; i--) {
         classList[i].checkMark(0, i * shelfHeight + shelfScroll);
+        if (classList[i].hoverDelete(0, i * shelfHeight + shelfScroll)) {
+            classList.splice(i, 1);
+        }
     }
 }

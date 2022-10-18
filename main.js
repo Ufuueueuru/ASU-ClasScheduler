@@ -186,6 +186,24 @@ class Class {
         }
     }
 
+    hoverDelete(x, y) {
+        let unit = shelfWidth / 11;
+        let size = 20;
+
+        let trashX = x + unit - size * 1.1;
+        let trashY = y + shelfHeight / 2;
+
+        let trashLeft = trashX - size / 3;
+        let trashRight = trashX + size / 3;
+        let trashTop = trashY - size / 3;
+        let trashDown = trashY + size / 3;
+
+        if (mouseX > trashLeft && mouseX < trashRight && mouseY > trashTop && mouseY < trashDown) {
+            return true;
+        }
+        return false;
+    }
+
     drawShelf(x, y, width) {//   ||\\\||\\||
         textAlign(LEFT);
         textSize(12);
@@ -201,7 +219,7 @@ class Class {
         fill(255, 198, 39);
         stroke(0);
         let size = 20;
-        rect(x + unit - size/2, y + shelfHeight / 2 - size/2, size, size);
+        rect(x + unit - size/2, y + shelfHeight / 2 - size/2, size, size);//Check mark box
         if (this.checked) {
             stroke(140, 29, 64);
             strokeWeight(5);
@@ -209,6 +227,29 @@ class Class {
             line(x + unit, y + shelfHeight / 2 + size / 3, x + unit + size / 2, y + shelfHeight / 2 - size / 2);
             strokeWeight(1);
         }
+
+        
+        let trashX = x + unit - size * 1.1;
+        let trashY = y + shelfHeight / 2;
+
+        let trashLeft = trashX - size / 3;
+        let trashRight = trashX + size / 3;
+        let trashTop = trashY - size / 3;
+        let trashDown = trashY + size / 3;
+        noStroke();
+        fill(150, 150, 150, 200);
+        if (mouseX > trashLeft && mouseX < trashRight && mouseY > trashTop && mouseY < trashDown) {
+            rect(trashX - size / 2.5, trashY - size / 2.5, size * 2 / 2.5, size * 2 / 2.5);//Delete box
+        }
+
+        strokeWeight(3.5);
+        stroke(140, 29, 64);
+        bezier(trashX - size / 3, trashY - size / 3, trashX, trashY - size / 2, trashX, trashY - size / 2, trashX + size / 3, trashY - size / 3);
+        line(trashX - size / 3.1, trashY, trashX - size / 3.2, trashY + size / 3);//Left trash line
+        line(trashX, trashY - size / 8, trashX, trashY + size / 2.7);//Middle trash line
+        line(trashX + size / 3.1, trashY, trashX + size / 3.2, trashY + size / 3);//Right trash line
+        strokeWeight(1);
+        
 
         fill(0);
         noStroke();

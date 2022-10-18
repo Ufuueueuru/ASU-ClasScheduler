@@ -11,6 +11,8 @@ function addNewClass() {
 
         classList.push(new Class(classStrings));
         saveList();
+
+        newClass.value = "";
     } else {
         //There must be at least 16 lines to match the proper formatting
         addClassError();
